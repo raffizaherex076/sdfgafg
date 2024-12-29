@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apk rekap saldo by vixzaa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: url('https://images.unsplash.com/photo-1506748686214-9e0a5f9a89a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwyNjEyNzN8MHwxfGFsbHwxfHx8fHx8fDE2NTcwNzY2OTQ&ixlib=rb-1.2.1&q=80&w=1080') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+        }
+
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            opacity: 0.9;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #6c757d;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #5a6268;
+        }
+
+        .hasil {
+            margin-top: 20px;
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: #000;
+            white-space: pre-wrap;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .btn-salin {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            display: none;
+            font-weight: bold;
+        }
+
+        .btn-salin:hover {
+            background-color: #5a6268;
+        }
+
+        /* Login form styling */
+        .login-form {
+            display: block;
+            max-width: 400px;
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .login-form button {
+            background-color: #007bff;
+            font-size: 1em;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 20px;
+            top: 38px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Animasi */
+        .fade {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .fade.show {
+            opacity: 1;
+        }
+
+        #ucapan {
+            font-size: 1.2em;
+            color: green;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Login Form -->
+    <div class="login-form" id="loginForm">
+        <h1>Login</h1>
+        <input type="text" id="username" placeholder="Username" required><br>
+        <div style="position: relative;">
+            <input type="password" id="password" placeholder="Password" required><br>
+            <span class="show-password" onclick="togglePassword()">Tampilkan Sandi</span>
+        </div>
+        <button onclick="login()">Login</button>
+        <p id="errorMessage" style="color: red;"></p>
+    </div>
+
+    <!-- Ucapan Selamat Datang (Hidden initially) -->
+    <div id="ucapan" class="fade" style="display: none;">
+        <h1>Selamat Datang admin judi pendosa 🎉</h1>
+    </div>
+
+    <!-- Rekap Form (Hidden initially) -->
+    <div class="container" id="rekapForm" style="display: none;">
+        <h1>Apk rekap vixzaa</h1>
+        <p>Masukkan list disini mek:</p>
+        <textarea id="inputAngka" placeholder="Masukkan data disini..."></textarea><br><br>
+        <button onclick="hitungJumlah()">Hitung Saldo</button>
+        <button onclick="hitungBiayaAdmin()">Hitung Biaya Admin</button>
+        <button id="btnSalin" class="btn-salin" onclick="salinHasil()">Salin Hasil</button>
+        <div id="hasil" class="hasil"></div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            var passwordField = document.getElementById("password");
+            var passwordText = document.querySelector(".show-password");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordText.innerText = "Sembunyikan Sandi";  // Ubah teks saat kata sandi terlihat
+            } else {
+                passwordField.type = "password";
+                passwordText.innerText = "Tampilkan Sandi";  // Kembalikan teks saat kata sandi tersembunyi
+            }
+        }
+
+        function login() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var errorMessage = document.getElementById("errorMessage");
+
+            // Validasi input
+            if (!username && !password) {
+                errorMessage.innerText = "Harap masukkan username dan kata sandi.";  // Keduanya kosong
+            } else if (!username) {
+                errorMessage.innerText = "Harap masukkan username.";  // Username kosong
+            } else if (!password) {
+                errorMessage.innerText = "Harap masukkan kata sandi.";  // Kata sandi kosong
+            } else if (username === "rekap" && password === "kb123") {
+                document.getElementById("loginForm").style.display = "none";
+                var ucapan = document.getElementById("ucapan");
+                ucapan.style.display = "block";
+                setTimeout(function() {
+                    ucapan.classList.add("show"); // Menampilkan ucapan
+                }, 100);
+
+                // Setelah animasi selesai, tampilkan halaman kedua
+                setTimeout(function() {
+                    document.getElementById("rekapForm").style.display = "block";
+                    ucapan.classList.remove("show"); // Menghilangkan ucapan secara perlahan
+                }, 2000);
+
+                errorMessage.innerText = "";
+            } else {
+                errorMessage.innerText = "Username atau password salah. 😢";
+            }
+        }
+
+        function hitungJumlah() {
+            var input = document.getElementById("inputAngka").value.trim();
+            var hasilDiv = document.getElementById("hasil");
+            var tombolSalin = document.getElementById("btnSalin");
+            hasilDiv.innerHTML = "";  // Bersihkan hasil sebelumnya
+
+            var bagian = input.split(/\n\s*\n/);
+            var totals = [];
+            var totalKeseluruhan = 0;
+            var totalLF = [0, 0];
+            var listLF = [[], []];
+
+            bagian.forEach(function (data, index) {
+                var baris = data.trim().split('\n');
+                var total = 0;
+                var listItems = '';
+                var lfTotal = 0;
+                var lfItems = [];
+
+                baris.forEach(function (baris) {
+                    var angka = baris.match(/(\d+(\.\d+)?)/g);
+                    if (angka) {
+                        total += angka.reduce((sum, num) => sum + parseFloat(num), 0);
+                    }
+                    if (/LF/i.test(baris)) {
+                        var lfAngka = baris.match(/(\d+(\.\d+)?)(?=\s*LF)/gi);
+                        if (lfAngka) {
+                            lfTotal += lfAngka.reduce((sum, num) => sum + parseFloat(num), 0);
+                            lfItems = lfItems.concat(lfAngka);
+                        }
+                    }
+                    listItems += `<li>${baris}</li>`;
+                });
+
+                if (total !== 0) {
+                    var li = document.createElement("li");
+                    li.innerHTML = `<ul>${listItems}</ul><p>Total Keseluruhan = ${total}</p>`;
+                    hasilDiv.appendChild(li);
+
+                    totals.push(total);
+                    totalKeseluruhan += total;
+                    totalLF[index] = lfTotal;
+                    listLF[index] = lfItems;
+                }
+            });
+
+            if (totals.length > 1 && totals[0] !== 0 && totals[1] !== 0) {
+                var selisihUl = document.createElement("ul");
+                var selisih = totals[0] - totals[1];
+
+                var li = document.createElement("li");
+                if (selisih === 0) {
+                    li.innerText = "selisih kecil dan besar = Dah BL Mek";
+                } else {
+                    li.innerText = `Selisih ${totals[0]} dan ${totals[1]} = - ${selisih}`;
+                }
+                selisihUl.appendChild(li);
+
+                hasilDiv.appendChild(selisihUl);
+            }
+
+            if (totals.length > 1 && (totals[0] !== 0 || totals[1] !== 0)) {
+                var totalLFAll = totalLF[0] + totalLF[1];
+                var saldoSeharusnya = totals[0] + totals[1] - totalLFAll;
+                var saldoUl = document.createElement("ul");
+
+                var li = document.createElement("li");
+                li.innerText = `Saldo jika dikurangi LF = ${saldoSeharusnya} (LF ${listLF[0].concat(listLF[1]).join(', ')})`;
+                saldoUl.appendChild(li);
+
+                hasilDiv.appendChild(saldoUl);
+            }
+
+            if (totalKeseluruhan !== 0) {
+                var totalUl = document.createElement("ul");
+                var li = document.createElement("li");
+                li.innerText = `Total Keseluruhan = ${totalKeseluruhan}`;
+                totalUl.appendChild(li);
+
+                hasilDiv.appendChild(totalUl);
+            }
+
+            if (hasilDiv.innerHTML) {
+                tombolSalin.style.display = "block";
+            }
+        }
+
+        function salinHasil() {
+            var hasilDiv = document.getElementById("hasil");
+            var textArea = document.createElement('textarea');
+            textArea.value = hasilDiv.innerText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+    </script>
+
+</body>
+</html>
